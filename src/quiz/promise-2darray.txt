@@ -1,1 +1,42 @@
 Explain the code execution based on the order of the messages logged in src/quiz/promise-2darray.txt.
+
+
+The code execution follows the asynchronous nature of JavaScript promises, which can help explain the order of the logged messages. Let's break it down:
+
+Code Walkthrough:
+
+1. Function Declaration:
+   - `sum2DArray(arr: number[][])` is a function that takes a 2D array of numbers and returns a promise. The promise will either resolve with the sum of all the elements in the array or reject if the array is empty.
+   - It immediately logs `'Sum called ... '` when called and checks if the array is empty.
+   - If the array is not empty, it schedules a `setTimeout` callback (with a delay of 0) to compute the sum of the elements asynchronously and resolves the promise with the result.
+   - Before returning from the function, it logs `'returning from sum'` right after `setTimeout` is scheduled.
+
+2. Promise Execution:
+   - The promise gets evaluated only after the synchronous portion of the function completes. When the array is valid, the `setTimeout` ensures that the summing process happens asynchronously.
+
+Example Execution (`array2D = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]`):
+
+1. The first call to `sum2DArray(array2D)` logs `'Sum called ... '` to indicate that the function has been invoked.
+2. It immediately schedules the `setTimeout` to compute the sum asynchronously and logs `'returning from sum'` to indicate that the synchronous part of the function is done and it will return the promise.
+3. The `setTimeout` is now running, and as it executes asynchronously, it logs individual summing operations like `'Adding 1 to sum'`, `'Adding 2 to sum'`, and so on for each element in the 2D array.
+4. Once all elements are summed up, the promise resolves, logging `'sumPromise1 resolved: 45'`, meaning the total sum of the array elements is 45.
+
+Empty Array Case:
+
+1. The second call to `sum2DArray([])` logs `'Sum called ... '` but quickly hits the empty array check. It rejects the promise with the message `'Cannot sum an empty array'`.
+2. It logs `'sumPromise2 rejected: Cannot sum an empty array'`, indicating that the function correctly handled the edge case.
+
+Logged Message Order in the File:
+Given this breakdown, here’s the likely order of logged messages:
+
+1. `'Sum called ... '` — from `sum2DArray(array2D)` invocation.
+2. `'returning from sum'` — synchronous part ends.
+3. `'Sum called ... '` — from `sum2DArray([])` invocation.
+4. `'sumPromise2 rejected: Cannot sum an empty array'` — promise rejected due to an empty array.
+5. `'Adding 1 to sum'` — first element of `array2D` processed.
+6. `'Adding 2 to sum'` — second element of `array2D` processed.
+7. ... (similar logs for the rest of the elements in `array2D`)
+8. `'Adding 9 to sum'` — last element of `array2D` processed.
+9. `'sumPromise1 resolved: 45'` — promise resolved with the total sum.
+
+The `setTimeout` in `sum2DArray(array2D)` ensures that its completion (the sum calculation) happens after the synchronous logs, including the rejection of the second promise for the empty array.
